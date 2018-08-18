@@ -1,26 +1,32 @@
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
-import csv
+import json
 
-class Points():
+# set chrome headless
+chrome_options = Options()
+chrome_options.add_argument("--headless")
+browser = webdriver.Chrome(chrome_options=chrome_options)
 
-    def __init__(self):
-        self.url = "https://freecodecamp.org/"
-        self.usernames = []
-        fieldnames = ["user_name", "initial_points", "current_points"]
-        csvfile = open('usernames.csv', 'w', newline='')
-        self.writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
-        self.writer.writeheader()
-        chrome_options = Options()
-        chrome_options.add_argument("--headless")
-        self.browser = webdriver.Chrome(chrome_options=chrome_options)
+# get usernames
+with open("user_names.txt") as file:
+    usernames = file.read().split('\n')
 
-    def add_username(self, username):
-        initial_point = self.get_points(username)
-        self.writer.writerow({'user_name': username, "initial_points": initial_point})
-    
-    def get_points(self, username):
-        self.browser.get(self.url + username)
-        self.browser.implicitly_wait(30)
-        point = self.browser.find_element_by_class_name('points').text
-        return point
+# scrape site
+url = "https://freecodecamp.org/"
+
+# points holder
+points = []
+
+# scape user points
+for username in usernames:
+    browser.get(url + username)
+    browser.implicitly_wait(30)
+    point = browser.find_element_by_class_name('points').text
+    points.append({
+        username: username,
+        "points": point[:-7]
+    })
+
+# output to file as json
+with open("output.json", "w") as file:
+    json.dump(points, file, indent=4, ensure_ascii=False)
