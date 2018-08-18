@@ -1,8 +1,16 @@
 from selenium import webdriver
+from selenium.webdriver.chrome.options import Options
 
+# set chrome headless
+chrome_options = Options()
+chrome_options.add_argument("--headless")
+browser = webdriver.Chrome(chrome_options=chrome_options)
+
+# scrape sites
 url = "https://freecodecamp.org/"
 usernames = ["123vivekr", "isht3", "ak04"]
-browser = webdriver.PhantomJS()
+
+# points holder
 points = []
 
 for username in usernames:
